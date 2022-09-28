@@ -1,6 +1,5 @@
 @import '~antd/dist/antd.css';
 
-
 .container {
     padding-top: 21px;
     background-color: #fff;
@@ -15,7 +14,6 @@
 @media (max-width: 907px) {
     .container {
         grid-template-columns: repeat(1, auto);
-  
     }
 }
 
@@ -24,5 +22,5 @@
 }
 
 .font-face-inter {
-    font-family: "Inter";
-   }
+    font-family: 'Inter';
+}
