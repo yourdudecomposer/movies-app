@@ -34,13 +34,14 @@ export default function Card(props) {
 
 Card.defaultProps = {
     title: 'Title',
-    releaseDate: '-8640000000000000',
+    posterPath: '',
+    releaseDate: '01-01-3078',
     overview:
         ' Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas eveniet officiis dolore explicabo? Tempora neque sit ratione accusantium doloremque, odit repellendus voluptate? Laborum provident vel numquam. Sed quis a explicabo.',
 };
 Card.propTypes = {
     title: PropTypes.string,
-    posterPath: PropTypes.string.isRequired,
+    posterPath: PropTypes.string,
     releaseDate: PropTypes.string,
     overview: PropTypes.string,
 };

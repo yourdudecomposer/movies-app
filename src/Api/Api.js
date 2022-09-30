@@ -2,21 +2,15 @@ export default class Api {
     url = 'https://api.themoviedb.org/3/search/movie';
 
     api_key = 'dc6a91030f196c7ac8aced1095b014e9';
+    // api_key = '';
 
-    searchMovie = async (query) => {
-        const res = await fetch(
-            `${this.url}?api_key=${this.api_key}&query=${query}`
+    getMovies = async (query) =>
+        fetch(`${this.url}?api_key=${this.api_key}&query=${query}`).then(
+            (res) => {
+                if (res.ok) {
+                    return res.json();
+                }
+                throw new Error(`Status not 200 is ${res.status}`);
+            }
         );
-        if (!res.ok) {
-            throw new Error(
-                `Could not found fetch ${query}, received ${res.status}`
-            );
-        }
-        return res.json();
-    };
-
-    getResults = async (query) => {
-        const res = await this.searchMovie(query);
-        return res.results;
-    };
 }
