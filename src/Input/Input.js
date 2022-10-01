@@ -10,13 +10,16 @@ export default class Search extends React.Component {
 
     onChange = (e) => {
         const { search } = this.props;
-        const { value } = this.state;
 
         this.setState(
             {
                 value: e.target.value,
             },
-            () => search(value)
+            () => {
+                const { value } = this.state;
+
+                search(value);
+            }
         );
     };
 
