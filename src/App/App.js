@@ -10,6 +10,7 @@ import Api from '../Api/Api';
 
 class App extends React.Component {
     state = {
+        isSpin: false,
         isLoaded: false,
         movies: null,
         error: null,
@@ -24,6 +25,7 @@ class App extends React.Component {
         else {
             this.setState({
                 isLoaded: false,
+                isSpin: true,
             });
         }
     };
@@ -65,7 +67,8 @@ class App extends React.Component {
     };
 
     render() {
-        const { isLoaded, movies, error, page, totalPages } = this.state;
+        const { isLoaded, movies, error, page, isSpin, totalPages } =
+            this.state;
         const cards =
             isLoaded && !error
                 ? movies.map((movie) => (
@@ -78,7 +81,7 @@ class App extends React.Component {
                       />
                   ))
                 : null;
-        const spin = !isLoaded && !error ? <Spin /> : null;
+        const spin = !isLoaded && !error && isSpin ? <Spin /> : null;
         const alert = error ? (
             <Alert
                 message={error.name}

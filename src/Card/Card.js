@@ -10,8 +10,11 @@ export default function Card(props) {
         return `${subString.slice(0, subString.lastIndexOf(' '))}...`;
     };
     const { title, posterPath, releaseDate, overview } = props;
+    const outputDate = (() => {
+        if (releaseDate) return format(new Date(releaseDate), 'MMMM d, yyy');
+        return 'no data';
+    })();
 
-    const outputDate = format(new Date(releaseDate), 'MMMM d, yyy');
     return (
         <div className="card">
             <img
@@ -35,7 +38,7 @@ export default function Card(props) {
 Card.defaultProps = {
     title: 'Title',
     posterPath: '',
-    releaseDate: '01-01-3078',
+    releaseDate: '',
     overview:
         ' Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas eveniet officiis dolore explicabo? Tempora neque sit ratione accusantium doloremque, odit repellendus voluptate? Laborum provident vel numquam. Sed quis a explicabo.',
 };
