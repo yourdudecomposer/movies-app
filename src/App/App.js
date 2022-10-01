@@ -1,34 +1,45 @@
 import './App.css';
 import React from 'react';
-import { Spin, Alert } from 'antd';
+import { Alert } from 'antd';
 
+import Pagination from '../Pagination/Pagination';
+import Spin from '../Spin/Spin';
+import Input from '../Input/Input';
 import Card from '../Card/Card';
 import Api from '../Api/Api';
 
 class App extends React.Component {
-    search = 'd';
-
     state = {
         isLoaded: false,
         movies: null,
         error: null,
+        page: null,
+        totalPages: null,
     };
 
     api = new Api();
 
-    componentDidMount() {
-        this.putMoviesToState();
-    }
+    search = (req) => {
+        if (req) this.putMoviesToState(req);
+        else {
+            this.setState({
+                isLoaded: false,
+            });
+        }
+    };
 
-    putMoviesToState = () => {
+    putMoviesToState = (req) => {
         this.api
-            .getMovies(this.search)
+            .getMovies(req)
             .then((result) => {
                 const movies = result.results;
+
                 if (movies) {
                     return this.setState({
                         isLoaded: true,
                         movies,
+                        page: result.page,
+                        totalPages: result.total_pages,
                     });
                 }
                 throw new Error(`movies is ${movies}`);
@@ -36,7 +47,7 @@ class App extends React.Component {
             .catch((err) => {
                 if (err.message === 'Failed to fetch') {
                     this.setState({
-                        isLoaded: false,
+                        isLoaded: true,
                         error: {
                             name: 'Whooops',
                             message: 'We can`t connect each other',
@@ -44,7 +55,7 @@ class App extends React.Component {
                     });
                 } else
                     this.setState({
-                        isLoaded: false,
+                        isLoaded: true,
                         error: {
                             name: err.name,
                             message: err.message,
@@ -54,7 +65,7 @@ class App extends React.Component {
     };
 
     render() {
-        const { isLoaded, movies, error } = this.state;
+        const { isLoaded, movies, error, page, totalPages } = this.state;
         const cards =
             isLoaded && !error
                 ? movies.map((movie) => (
@@ -77,14 +88,19 @@ class App extends React.Component {
                 closable
             />
         ) : null;
+        const pagination = isLoaded ? (
+            <Pagination current={page} total={totalPages * 10} />
+        ) : null;
         return (
             <div className="App font-face-inter">
                 <div className="container">
-                    {spin ? <div className="spin-container">{spin}</div> : null}
+                    <Input search={this.search} />
+                    {spin}
                     {alert}
                     {cards ? (
                         <div className="card-container">{cards}</div>
                     ) : null}
+                    {pagination}
                 </div>
             </div>
         );
