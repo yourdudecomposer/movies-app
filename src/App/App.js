@@ -23,12 +23,12 @@ class App extends React.Component {
 
     api = new Api();
 
-    search = (req) => {
+    search = (req, page) => {
         this.setState({
             isSpin: true,
             isNoResult: false,
         });
-        if (req) this.putMoviesToState(req);
+        if (req) this.putMoviesToState(req, page);
         else {
             this.setState({
                 isLoaded: false,
@@ -38,10 +38,11 @@ class App extends React.Component {
         }
     };
 
-    putMoviesToState = (req) => {
+    putMoviesToState = (req, page) => {
         this.api
-            .getMovies(req)
+            .getMovies(req, page)
             .then((result) => {
+                console.log(result);
                 const movies = result.results;
                 if (movies.length > 0) {
                     return this.setState({
@@ -88,6 +89,7 @@ class App extends React.Component {
         this.setState({
             page,
         });
+        this.search('mama', page);
     };
 
     render() {

@@ -4,13 +4,13 @@ export default class Api {
     api_key = 'dc6a91030f196c7ac8aced1095b014e9';
     // api_key = '';
 
-    getMovies = async (query) =>
-        fetch(`${this.url}?api_key=${this.api_key}&query=${query}`).then(
-            (res) => {
-                if (res.ok) {
-                    return res.json();
-                }
-                throw new Error(`Status not 200 is ${res.status}`);
+    getMovies = async (query, page) =>
+        fetch(
+            `${this.url}?api_key=${this.api_key}&query=${query}&page=${page}`
+        ).then((res) => {
+            if (res.ok) {
+                return res.json();
             }
-        );
+            throw new Error(`Status not 200 is ${res.status}`);
+        });
 }
