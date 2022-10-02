@@ -1,17 +1,20 @@
 import './App.css';
 import React from 'react';
 import { Alert } from 'antd';
+import debounce from 'lodash/debounce';
 
 import Pagination from '../Pagination/Pagination';
 import Spin from '../Spin/Spin';
 import Input from '../Input/Input';
 import Card from '../Card/Card';
 import Api from '../Api/Api';
+import NoResult from '../NoResult/NoResult';
 
 class App extends React.Component {
     state = {
         isSpin: false,
         isLoaded: false,
+        isNoResult: false,
         movies: null,
         error: null,
         page: null,
@@ -20,7 +23,12 @@ class App extends React.Component {
 
     api = new Api();
 
+    debouncedSearch = debounce(this.search, 1000);
+
     search = (req) => {
+        this.setState({
+            isSpin: true,
+        });
         if (req) this.putMoviesToState(req);
         else {
             this.setState({
@@ -35,13 +43,20 @@ class App extends React.Component {
             .getMovies(req)
             .then((result) => {
                 const movies = result.results;
-
-                if (movies) {
+                if (movies.length > 0) {
                     return this.setState({
+                        isSpin: false,
                         isLoaded: true,
                         movies,
                         page: result.page,
                         totalPages: result.total_pages,
+                    });
+                }
+                if (movies.length === 0) {
+                    return this.setState({
+                        isSpin: false,
+                        isLoaded: false,
+                        isNoResult: true,
                     });
                 }
                 throw new Error(`movies is ${movies}`);
@@ -51,6 +66,7 @@ class App extends React.Component {
                     this.setState({
                         isLoaded: true,
                         error: {
+                            isSpin: false,
                             name: 'Whooops',
                             message: 'We can`t connect each other',
                         },
@@ -59,6 +75,7 @@ class App extends React.Component {
                     this.setState({
                         isLoaded: true,
                         error: {
+                            isSpin: false,
                             name: err.name,
                             message: err.message,
                         },
@@ -67,10 +84,17 @@ class App extends React.Component {
     };
 
     render() {
-        const { isLoaded, movies, error, page, isSpin, totalPages } =
-            this.state;
+        const {
+            isLoaded,
+            movies,
+            error,
+            page,
+            isSpin,
+            isNoResult,
+            totalPages,
+        } = this.state;
         const cards =
-            isLoaded && !error
+            isLoaded && !error && !isSpin
                 ? movies.map((movie) => (
                       <Card
                           key={movie.id}
@@ -81,7 +105,9 @@ class App extends React.Component {
                       />
                   ))
                 : null;
-        const spin = !isLoaded && !error && isSpin ? <Spin /> : null;
+
+        const spin = isSpin ? <Spin /> : null;
+
         const alert = error ? (
             <Alert
                 message={error.name}
@@ -91,16 +117,20 @@ class App extends React.Component {
                 closable
             />
         ) : null;
+
         const pagination =
             isLoaded && totalPages > 1 ? (
                 <Pagination current={page} total={totalPages * 10} />
             ) : null;
+
+        const noResult = isNoResult ? <NoResult /> : null;
         return (
             <div className="App font-face-inter">
                 <div className="container">
-                    <Input search={this.search} />
+                    <Input search={this.debouncedSearch} />
                     {spin}
                     {alert}
+                    {noResult}
                     {cards ? (
                         <div className="card-container">{cards}</div>
                     ) : null}

@@ -8,6 +8,12 @@ export default class Search extends React.Component {
         value: '',
     };
 
+    textInput = React.createRef();
+
+    componentDidMount() {
+        this.textInput.current.focus();
+    }
+
     onChange = (e) => {
         const { search } = this.props;
 
@@ -26,14 +32,13 @@ export default class Search extends React.Component {
     render() {
         const { value } = this.state;
         return (
-            <div className="input-container">
-                <Input
-                    onChange={this.onChange}
-                    value={value}
-                    className="input"
-                    placeholder="Try typing..."
-                />
-            </div>
+            <Input
+                ref={this.textInput}
+                onChange={this.onChange}
+                value={value}
+                className="input"
+                placeholder="Try typing..."
+            />
         );
     }
 }

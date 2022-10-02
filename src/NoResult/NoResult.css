@@ -1,0 +1,14 @@
+.no-result-container {
+    width: 938px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.no-result-img {
+    width: 165px;
+}
+.no-result-text {
+    margin: 0;
+    font-size: 15px;
+}
