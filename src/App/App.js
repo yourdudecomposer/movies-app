@@ -45,6 +45,7 @@ class App extends React.Component {
                 if (movies.length > 0) {
                     return this.setState({
                         isSpin: false,
+                        isNoResult: false,
                         isLoaded: true,
                         movies,
                         page: result.page,

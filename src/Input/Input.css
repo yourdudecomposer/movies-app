@@ -1,5 +1,6 @@
 .input {
-    width: 938px;
+    max-width: 938px;
+    height: 40px;
     margin: 0 auto;
     display: block;
     margin-bottom: 21px;

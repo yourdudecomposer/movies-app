@@ -4,17 +4,28 @@
     background-color: #fff;
     width: 100%;
     max-width: 1010px;
+    padding-left: 36px;
+    padding-right: 36px;
 }
 
+
+@media (max-width: 980px) {
+    .container {
+  
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+}
 .card-container {
     display: grid;
     grid-template-columns: repeat(2, auto);
-    justify-content: space-evenly;
+    justify-content: space-between;
 }
 
-@media (max-width: 907px) {
+@media (max-width: 980px) {
     .card-container {
         grid-template-columns: repeat(1, auto);
+        justify-content: space-evenly;
     }
 }
 
