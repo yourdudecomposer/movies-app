@@ -8,8 +8,8 @@ import noImgtxt from '../img/noImg-txt.png';
 
 export default function Card(props) {
     const trimText = (text) => {
-        if (text.length < 174) return text;
-        const subString = text.slice(0, 174);
+        if (text.length < 150) return text;
+        const subString = text.slice(0, 150);
         return `${subString.slice(0, subString.lastIndexOf(' '))}...`;
     };
     const fallbackImage = (e) => {
@@ -31,7 +31,6 @@ export default function Card(props) {
                 onError={fallbackImage}
             />
             <div className="about">
-                {noImg}
                 <h2 className="movie-title">{title}</h2>
                 <p className="movie-date">{outputDate}</p>
                 <div className="genre-info">

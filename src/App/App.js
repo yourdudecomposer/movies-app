@@ -25,7 +25,7 @@ class App extends React.Component {
         else {
             this.setState({
                 isLoaded: false,
-                isSpin: true,
+                isSpin: false,
             });
         }
     };
@@ -91,9 +91,10 @@ class App extends React.Component {
                 closable
             />
         ) : null;
-        const pagination = isLoaded ? (
-            <Pagination current={page} total={totalPages * 10} />
-        ) : null;
+        const pagination =
+            isLoaded && cards.length > 20 ? (
+                <Pagination current={page} total={totalPages * 10} />
+            ) : null;
         return (
             <div className="App font-face-inter">
                 <div className="container">
