@@ -92,7 +92,7 @@ class App extends React.Component {
             />
         ) : null;
         const pagination =
-            isLoaded && cards.length > 20 ? (
+            isLoaded && totalPages > 1 ? (
                 <Pagination current={page} total={totalPages * 10} />
             ) : null;
         return (
