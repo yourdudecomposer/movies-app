@@ -134,7 +134,7 @@ class App extends React.Component {
                 />
             ) : null;
 
-        const noResult = isNoResult ? <NoResult /> : null;
+        const noResult = !isNoResult ? <NoResult /> : null;
         return (
             <div className="App font-face-inter">
                 <div className="container">
