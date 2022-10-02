@@ -2,3 +2,19 @@
     display: flex;
     justify-content: center;
 }
+.ant-pagination-item a {
+    color: #000000a6;
+}
+.ant-pagination-item a:hover {
+    color: #1890ff;
+}
+.ant-pagination-item-active {
+    background-color: #1890ff;
+    border-radius: 4px;
+}
+.ant-pagination-item-active a {
+    color: #fff;
+}
+.ant-pagination-item-active a:hover {
+    color: #000000a6;
+}

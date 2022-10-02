@@ -26,6 +26,7 @@ class App extends React.Component {
     search = (req) => {
         this.setState({
             isSpin: true,
+            isNoResult: false,
         });
         if (req) this.putMoviesToState(req);
         else {
@@ -83,6 +84,12 @@ class App extends React.Component {
             });
     };
 
+    changePage = (page) => {
+        this.setState({
+            page,
+        });
+    };
+
     render() {
         const {
             isLoaded,
@@ -120,7 +127,11 @@ class App extends React.Component {
 
         const pagination =
             isLoaded && totalPages > 1 ? (
-                <Pagination current={page} total={totalPages * 10} />
+                <Pagination
+                    changePage={this.changePage}
+                    current={page}
+                    total={totalPages * 10}
+                />
             ) : null;
 
         const noResult = isNoResult ? <NoResult /> : null;
