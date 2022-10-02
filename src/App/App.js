@@ -23,8 +23,6 @@ class App extends React.Component {
 
     api = new Api();
 
-    debouncedSearch = debounce(this.search, 1000);
-
     search = (req) => {
         this.setState({
             isSpin: true,
@@ -34,6 +32,7 @@ class App extends React.Component {
             this.setState({
                 isLoaded: false,
                 isSpin: false,
+                isNoResult: false,
             });
         }
     };
@@ -127,7 +126,7 @@ class App extends React.Component {
         return (
             <div className="App font-face-inter">
                 <div className="container">
-                    <Input search={this.debouncedSearch} />
+                    <Input search={debounce(this.search, 1000)} />
                     {spin}
                     {alert}
                     {noResult}
