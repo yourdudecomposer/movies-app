@@ -3,11 +3,18 @@ import React from 'react';
 import { format } from 'date-fns';
 import PropTypes from 'prop-types';
 
+import noImg from '../img/noImg.png';
+import noImgtxt from '../img/noImg-txt.png';
+
 export default function Card(props) {
     const trimText = (text) => {
         if (text.length < 174) return text;
         const subString = text.slice(0, 174);
         return `${subString.slice(0, subString.lastIndexOf(' '))}...`;
+    };
+    const fallbackImage = (e) => {
+        e.target.src = noImg;
+        e.target.src = noImgtxt;
     };
     const { title, posterPath, releaseDate, overview } = props;
     const outputDate = (() => {
@@ -21,8 +28,10 @@ export default function Card(props) {
                 className="poster"
                 src={`https://image.tmdb.org/t/p/original${posterPath}`}
                 alt="poster"
+                onError={fallbackImage}
             />
             <div className="about">
+                {noImg}
                 <h2 className="movie-title">{title}</h2>
                 <p className="movie-date">{outputDate}</p>
                 <div className="genre-info">
