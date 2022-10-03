@@ -7,8 +7,8 @@ export default function Search(props) {
     const { onChange, isLoaded } = props;
     const inputRef = useRef();
     useEffect(() => {
-        inputRef.current.focus();
-        if (isLoaded) inputRef.current.blur();
+        if (!isLoaded) inputRef.current.focus();
+        else inputRef.current.blur();
     });
     return (
         <Input
