@@ -15,15 +15,14 @@ export default class Search extends React.Component {
     }
 
     onChange = (e) => {
-        const { search } = this.props;
-
+        const { search, clearAll } = this.props;
+        clearAll(e);
         this.setState(
             {
                 value: e.target.value,
             },
             () => {
                 const { value } = this.state;
-
                 search(value);
             }
         );
@@ -45,8 +44,10 @@ export default class Search extends React.Component {
 
 Search.propTypes = {
     search: PropTypes.func,
+    clearAll: PropTypes.func,
 };
 
 Search.defaultProps = {
     search: () => {},
+    clearAll: () => {},
 };

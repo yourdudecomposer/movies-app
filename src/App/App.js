@@ -15,6 +15,7 @@ class App extends React.Component {
         isSpin: false,
         isLoaded: false,
         isNoResult: false,
+        // query: null,
         movies: null,
         error: null,
         page: null,
@@ -22,6 +23,16 @@ class App extends React.Component {
     };
 
     api = new Api();
+
+    clearAll = (e) => {
+        if (e.target.value === '')
+            this.setState({
+                isLoaded: false,
+                isSpin: false,
+                isNoResult: false,
+                error: null,
+            });
+    };
 
     search = (req, page) => {
         this.setState({
@@ -34,6 +45,7 @@ class App extends React.Component {
                 isLoaded: false,
                 isSpin: false,
                 isNoResult: false,
+                error: null,
             });
         }
     };
@@ -42,7 +54,6 @@ class App extends React.Component {
         this.api
             .getMovies(req, page)
             .then((result) => {
-                console.log(result);
                 const movies = result.results;
                 if (movies.length > 0) {
                     return this.setState({
@@ -67,8 +78,8 @@ class App extends React.Component {
                 if (err.message === 'Failed to fetch') {
                     this.setState({
                         isLoaded: true,
+                        isSpin: false,
                         error: {
-                            isSpin: false,
                             name: 'Whooops',
                             message: 'We can`t connect each other',
                         },
@@ -76,8 +87,8 @@ class App extends React.Component {
                 } else
                     this.setState({
                         isLoaded: true,
+                        isSpin: false,
                         error: {
-                            isSpin: false,
                             name: err.name,
                             message: err.message,
                         },
@@ -140,7 +151,10 @@ class App extends React.Component {
         return (
             <div className="App font-face-inter">
                 <div className="container">
-                    <Input search={debounce(this.search, 1000)} />
+                    <Input
+                        clearAll={this.clearAll}
+                        search={debounce(this.search, 1000)}
+                    />
                     {spin}
                     {alert}
                     {noResult}

@@ -4,7 +4,7 @@ export default class Api {
     api_key = 'dc6a91030f196c7ac8aced1095b014e9';
     // api_key = '';
 
-    getMovies = async (query, page) =>
+    getMovies = async (query, page = 1) =>
         fetch(
             `${this.url}?api_key=${this.api_key}&query=${query}&page=${page}`
         ).then((res) => {
