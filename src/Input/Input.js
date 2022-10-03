@@ -8,8 +8,8 @@ export default function Search(props) {
     const inputRef = useRef();
     useEffect(() => {
         inputRef.current.focus();
-    }, []);
-    if (isLoaded) inputRef.current.blur();
+        if (isLoaded) inputRef.current.blur();
+    });
     return (
         <Input
             ref={inputRef}

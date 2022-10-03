@@ -99,6 +99,11 @@ class App extends React.Component {
             page,
         });
         const { query } = this.state;
+        this.setState({
+            isSpin: true,
+            isNoResult: false,
+            isLoaded: false,
+        });
         this.search(query, page);
     };
 
