@@ -15,7 +15,7 @@ class App extends React.Component {
         isSpin: false,
         isLoaded: false,
         isNoResult: false,
-        // query: null,
+        query: '',
         movies: null,
         error: null,
         page: null,
@@ -24,30 +24,12 @@ class App extends React.Component {
 
     api = new Api();
 
-    clearAll = (e) => {
-        if (e.target.value === '')
-            this.setState({
-                isLoaded: false,
-                isSpin: false,
-                isNoResult: false,
-                error: null,
-            });
-    };
-
-    search = (req, page) => {
-        this.setState({
-            isSpin: true,
-            isNoResult: false,
-        });
+    debouncedSearch = debounce((req, page = 1) => {
         if (req) this.putMoviesToState(req, page);
-        else {
-            this.setState({
-                isLoaded: false,
-                isSpin: false,
-                isNoResult: false,
-                error: null,
-            });
-        }
+    }, 1000);
+
+    search = (req, page = 1) => {
+        if (req) this.putMoviesToState(req, page);
     };
 
     putMoviesToState = (req, page) => {
@@ -96,11 +78,41 @@ class App extends React.Component {
             });
     };
 
+    clearAll = (e) => {
+        if (e.target.value === '')
+            this.setState({
+                isLoaded: false,
+                isSpin: false,
+                isNoResult: false,
+                error: null,
+            });
+        else
+            this.setState({
+                isSpin: true,
+                isNoResult: false,
+                isLoaded: false,
+            });
+    };
+
     changePage = (page) => {
         this.setState({
             page,
         });
-        this.search('mama', page);
+        const { query } = this.state;
+        this.search(query, page);
+    };
+
+    onChange = (e) => {
+        this.clearAll(e);
+        this.setState(
+            {
+                query: e.target.value,
+            },
+            () => {
+                const { query } = this.state;
+                this.debouncedSearch(query);
+            }
+        );
     };
 
     render() {
@@ -109,6 +121,7 @@ class App extends React.Component {
             movies,
             error,
             page,
+            query,
             isSpin,
             isNoResult,
             totalPages,
@@ -151,10 +164,7 @@ class App extends React.Component {
         return (
             <div className="App font-face-inter">
                 <div className="container">
-                    <Input
-                        clearAll={this.clearAll}
-                        search={debounce(this.search, 1000)}
-                    />
+                    <Input query={query} onChange={this.onChange} />
                     {spin}
                     {alert}
                     {noResult}
