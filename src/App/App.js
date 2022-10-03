@@ -164,7 +164,11 @@ class App extends React.Component {
         return (
             <div className="App font-face-inter">
                 <div className="container">
-                    <Input query={query} onChange={this.onChange} />
+                    <Input
+                        isLoaded={isLoaded}
+                        query={query}
+                        onChange={this.onChange}
+                    />
                     {spin}
                     {alert}
                     {noResult}
