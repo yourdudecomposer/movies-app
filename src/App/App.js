@@ -20,6 +20,7 @@ class App extends React.Component {
         error: null,
         page: null,
         totalPages: null,
+        isFocus: true,
     };
 
     api = new Api();
@@ -39,6 +40,7 @@ class App extends React.Component {
                 const movies = result.results;
                 if (movies.length > 0) {
                     return this.setState({
+                        isFocus: false,
                         isSpin: false,
                         isNoResult: false,
                         isLoaded: true,
@@ -130,6 +132,7 @@ class App extends React.Component {
             isSpin,
             isNoResult,
             totalPages,
+            isFocus,
         } = this.state;
         const cards =
             isLoaded && !error && !isSpin
@@ -170,7 +173,7 @@ class App extends React.Component {
             <div className="App font-face-inter">
                 <div className="container">
                     <Input
-                        isLoaded={isLoaded}
+                        isFocus={isFocus}
                         query={query}
                         onChange={this.onChange}
                     />
