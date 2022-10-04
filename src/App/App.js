@@ -113,6 +113,7 @@ class App extends React.Component {
         this.clearAll(e);
         this.setState(
             {
+                isFocus: true,
                 query: e.target.value,
             },
             () => {
