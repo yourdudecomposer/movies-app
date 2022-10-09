@@ -31,23 +31,29 @@ class App extends React.Component {
         if (req) this.putMoviesToState(req, page);
     }, 1000);
 
-    search = (req, page = 1) => {
-        if (req) this.putMoviesToState(req, page);
-    };
+    componentDidMount() {
+        this.api.makeGuestSession().then((id) =>
+            this.setState({
+                id,
+            })
+        );
+    }
 
     componentDidCatch() {
-        console.log('componentDidCatch');
         this.setState({
             isError: true,
         });
     }
+
+    search = (req, page = 1) => {
+        if (req) this.putMoviesToState(req, page);
+    };
 
     putMoviesToState = (req, page) => {
         this.api
             .getMovies(req, page)
             .then((result) => {
                 const movies = result.results;
-                console.log(movies);
                 if (movies.length > 0) {
                     return this.setState({
                         isFocus: false,
@@ -133,10 +139,6 @@ class App extends React.Component {
         );
     };
 
-    componentDidMount() {
-        this.api.makeGuestSession().then((id) => console.log(id));
-    }
-
     render() {
         const {
             isLoaded,
@@ -149,6 +151,7 @@ class App extends React.Component {
             totalPages,
             isFocus,
             isError,
+            id,
         } = this.state;
         if (isError) {
             return (
@@ -204,6 +207,7 @@ class App extends React.Component {
                         query={query}
                         onChange={this.onChange}
                     />
+                    {id}
                     {spin}
                     {alert}
                     {noResult}

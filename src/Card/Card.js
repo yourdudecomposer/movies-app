@@ -23,7 +23,7 @@ export default function Card(props) {
         if (releaseDate) return format(new Date(releaseDate), 'MMMM d, yyy');
         return 'no data';
     })();
-    const innerWidth = innerWidth;
+    const { innerWidth } = window;
     return (
         <div className="card">
             <img
@@ -64,5 +64,5 @@ Card.propTypes = {
     posterPath: PropTypes.string,
     releaseDate: PropTypes.string,
     overview: PropTypes.string,
-    overview: PropTypes.number,
+    vote: PropTypes.number,
 };
