@@ -1,6 +1,6 @@
 import './App.css';
 import React from 'react';
-import { Alert } from 'antd';
+import { Alert, Tabs } from 'antd';
 import debounce from 'lodash/debounce';
 
 import Pagination from '../Pagination/Pagination';
@@ -202,19 +202,38 @@ class App extends React.Component {
         return (
             <div className="App font-face-inter">
                 <div className="container">
-                    <Input
-                        isFocus={isFocus}
-                        query={query}
-                        onChange={this.onChange}
+                    <Tabs
+                        defaultActiveKey="1"
+                        onChange={this.onChangeTab}
+                        items={[
+                            {
+                                label: `Search`,
+                                key: '1',
+                                children: [
+                                    <Input
+                                        isFocus={isFocus}
+                                        query={query}
+                                        onChange={this.onChange}
+                                    />,
+                                    spin,
+                                    alert,
+                                    noResult,
+                                    cards ? (
+                                        <div className="card-container">
+                                            {cards}
+                                        </div>
+                                    ) : null,
+                                    pagination,
+                                    id,
+                                ],
+                            },
+                            {
+                                label: `Rated`,
+                                key: '2',
+                                children: 'gulsimka',
+                            },
+                        ]}
                     />
-                    {id}
-                    {spin}
-                    {alert}
-                    {noResult}
-                    {cards ? (
-                        <div className="card-container">{cards}</div>
-                    ) : null}
-                    {pagination}
                 </div>
             </div>
         );
