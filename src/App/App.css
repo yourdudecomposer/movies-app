@@ -24,8 +24,7 @@
 
 @media (max-width: 980px) {
     .card-container {
-        grid-template-columns: repeat(1, auto);
-        justify-content: space-evenly;
+        display: block;
     }
 }
 

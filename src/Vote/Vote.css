@@ -1,0 +1,21 @@
+.vote {
+    border: 2px solid #e9d100;
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    top: 12px;
+    right: -10px;
+    border-radius: 50%;
+    font-size: 12px;
+    line-height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 980px) {
+    .vote {
+        top: 3px;
+        right: -3px;
+    }
+}

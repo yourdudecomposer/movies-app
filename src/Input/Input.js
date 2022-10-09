@@ -8,7 +8,7 @@ export default function Search(props) {
     const inputRef = useRef();
     useEffect(() => {
         if (isFocus) inputRef.current.focus();
-        else if (!isFocus) inputRef.current.blur();
+        else if (!isFocus && window.innerWidth < 481) inputRef.current.blur();
     });
     return (
         <Input

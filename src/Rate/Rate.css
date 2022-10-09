@@ -1,0 +1,17 @@
+.rate {
+    width: 239px;
+    font-size: 16px;
+    height: 46px;
+    bottom: 2px;
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    position: absolute;
+    bottom: 0;
+}
+
+@media (max-width: 980px) {
+    .rate {
+        position: static;
+    }
+}

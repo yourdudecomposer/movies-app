@@ -21,6 +21,8 @@ class App extends React.Component {
         page: null,
         totalPages: null,
         isFocus: true,
+        isError: false,
+        id: '',
     };
 
     api = new Api();
@@ -33,11 +35,19 @@ class App extends React.Component {
         if (req) this.putMoviesToState(req, page);
     };
 
+    componentDidCatch() {
+        console.log('componentDidCatch');
+        this.setState({
+            isError: true,
+        });
+    }
+
     putMoviesToState = (req, page) => {
         this.api
             .getMovies(req, page)
             .then((result) => {
                 const movies = result.results;
+                console.log(movies);
                 if (movies.length > 0) {
                     return this.setState({
                         isFocus: false,
@@ -123,6 +133,10 @@ class App extends React.Component {
         );
     };
 
+    componentDidMount() {
+        this.api.makeGuestSession().then((id) => console.log(id));
+    }
+
     render() {
         const {
             isLoaded,
@@ -134,7 +148,18 @@ class App extends React.Component {
             isNoResult,
             totalPages,
             isFocus,
+            isError,
         } = this.state;
+        if (isError) {
+            return (
+                <Alert
+                    message="SOMETHING GO WRONG!!!"
+                    description="("
+                    type="error"
+                    showIcon
+                />
+            );
+        }
         const cards =
             isLoaded && !error && !isSpin
                 ? movies.map((movie) => (
@@ -144,6 +169,7 @@ class App extends React.Component {
                           posterPath={movie.poster_path}
                           releaseDate={movie.release_date}
                           overview={movie.overview}
+                          vote={movie.vote_average}
                       />
                   ))
                 : null;
