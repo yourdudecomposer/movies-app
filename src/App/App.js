@@ -22,7 +22,8 @@ class App extends React.Component {
         totalPages: null,
         isFocus: true,
         isError: false,
-        id: '',
+        guestId: '',
+        ratedMovies: null,
     };
 
     api = new Api();
@@ -32,9 +33,9 @@ class App extends React.Component {
     }, 1000);
 
     componentDidMount() {
-        this.api.makeGuestSession().then((id) =>
+        this.api.makeGuestSession().then((guestId) =>
             this.setState({
-                id,
+                guestId,
             })
         );
     }
@@ -113,16 +114,18 @@ class App extends React.Component {
     };
 
     changePage = (page) => {
-        this.setState({
-            page,
-        });
-        const { query } = this.state;
-        this.setState({
-            isSpin: true,
-            isNoResult: false,
-            isLoaded: false,
-        });
-        this.search(query, page);
+        setTimeout(() => {
+            this.setState({
+                page,
+            });
+            const { query } = this.state;
+            this.setState({
+                isSpin: true,
+                isNoResult: false,
+                isLoaded: false,
+            });
+            this.search(query, page);
+        }, 300);
     };
 
     onChange = (e) => {
@@ -139,6 +142,20 @@ class App extends React.Component {
         );
     };
 
+    onChangeTab = (key) => {
+        if (key === '2') {
+            const { guestId } = this.state;
+            this.api
+                .getRatedMovies(guestId)
+                .then((res) => res.results)
+                .then((res) =>
+                    this.setState({
+                        ratedMovies: res,
+                    })
+                );
+        }
+    };
+
     render() {
         const {
             isLoaded,
@@ -151,7 +168,8 @@ class App extends React.Component {
             totalPages,
             isFocus,
             isError,
-            id,
+            guestId,
+            ratedMovies,
         } = this.state;
         if (isError) {
             return (
@@ -173,14 +191,31 @@ class App extends React.Component {
                           releaseDate={movie.release_date}
                           overview={movie.overview}
                           vote={movie.vote_average}
+                          guestId={guestId}
+                          movieId={movie.id}
                       />
                   ))
                 : null;
+        const ratedCards =
+            ratedMovies !== null &&
+            ratedMovies.map((movie) => (
+                <Card
+                    key={movie.id}
+                    title={movie.title}
+                    posterPath={movie.poster_path}
+                    releaseDate={movie.release_date}
+                    overview={movie.overview}
+                    vote={movie.vote_average}
+                    guestId={guestId}
+                    movieId={movie.id}
+                />
+            ));
 
-        const spin = isSpin ? <Spin /> : null;
+        const spin = isSpin ? <Spin key="spin" /> : null;
 
         const alert = error ? (
             <Alert
+                key="alert"
                 message={error.name}
                 description={error.message}
                 type="error"
@@ -192,17 +227,19 @@ class App extends React.Component {
         const pagination =
             isLoaded && totalPages > 1 ? (
                 <Pagination
+                    key="pages"
                     changePage={this.changePage}
                     current={page}
                     total={totalPages * 10}
                 />
             ) : null;
 
-        const noResult = isNoResult ? <NoResult /> : null;
+        const noResult = isNoResult ? <NoResult key="no Results" /> : null;
         return (
             <div className="App font-face-inter">
                 <div className="container">
                     <Tabs
+                        className="tabs"
                         defaultActiveKey="1"
                         onChange={this.onChangeTab}
                         items={[
@@ -211,6 +248,7 @@ class App extends React.Component {
                                 key: '1',
                                 children: [
                                     <Input
+                                        key="input"
                                         isFocus={isFocus}
                                         query={query}
                                         onChange={this.onChange}
@@ -219,18 +257,27 @@ class App extends React.Component {
                                     alert,
                                     noResult,
                                     cards ? (
-                                        <div className="card-container">
+                                        <div
+                                            key="cards"
+                                            className="card-container"
+                                        >
                                             {cards}
                                         </div>
                                     ) : null,
                                     pagination,
-                                    id,
                                 ],
                             },
                             {
                                 label: `Rated`,
                                 key: '2',
-                                children: 'gulsimka',
+                                children: ratedCards ? (
+                                    <div
+                                        key="ratedCards"
+                                        className="card-container"
+                                    >
+                                        {ratedCards}
+                                    </div>
+                                ) : null,
                             },
                         ]}
                     />

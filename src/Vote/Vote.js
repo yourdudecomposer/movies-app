@@ -19,7 +19,7 @@ function App(props) {
     };
     return (
         <div style={borderColor} className="vote">
-            {vote}
+            {vote.toFixed(1)}
         </div>
     );
 }

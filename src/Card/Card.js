@@ -18,7 +18,8 @@ export default function Card(props) {
         e.target.src = noImg;
         e.target.src = noImgtxt;
     };
-    const { title, posterPath, releaseDate, overview, vote } = props;
+    const { title, posterPath, releaseDate, overview, vote, guestId, movieId } =
+        props;
     const outputDate = (() => {
         if (releaseDate) return format(new Date(releaseDate), 'MMMM d, yyy');
         return 'no data';
@@ -45,7 +46,7 @@ export default function Card(props) {
                         ? trimText(overview, 150)
                         : trimText(overview, 100)}
                 </p>
-                <Rate />
+                <Rate guestId={guestId} movieId={movieId} />
             </div>
         </div>
     );
@@ -58,6 +59,8 @@ Card.defaultProps = {
     overview:
         ' Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas eveniet officiis dolore explicabo? Tempora neque sit ratione accusantium doloremque, odit repellendus voluptate? Laborum provident vel numquam. Sed quis a explicabo.',
     vote: -1,
+    guestId: '',
+    movieId: NaN,
 };
 Card.propTypes = {
     title: PropTypes.string,
@@ -65,4 +68,6 @@ Card.propTypes = {
     releaseDate: PropTypes.string,
     overview: PropTypes.string,
     vote: PropTypes.number,
+    guestId: PropTypes.string,
+    movieId: PropTypes.number,
 };

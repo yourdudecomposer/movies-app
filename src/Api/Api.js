@@ -17,14 +17,30 @@ export default class Api {
                 return res.guest_session_id;
             });
 
-    GetRatedMoviesForGuest = async (query, page, id) =>
+    postRatedMovie = async (guestId, movieId, data) => {
         fetch(
-            `${this.url}/3/guest_session/${id}/rated/movies?api_key=${this.api_key}&language=en-US&sort_by=created_at.asc`
+            `${this.url}/3/movie/${movieId}/rating?api_key=${this.api_key}&guest_session_id=${guestId}`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            }
+        ).then((res) => {
+            if (res.ok) return res.json();
+            throw new Error(`Something wrong witn send rate`);
+        });
+    };
+
+    getRatedMovies = async (guestId) =>
+        fetch(
+            `${this.url}/3/guest_session/${guestId}/rated/movies?api_key=${this.api_key}&language=en-US&sort_by=created_at.asc`
         ).then((res) => {
             if (res.ok) {
                 return res.json();
             }
-            throw new Error(`Something wrong with GetRatedMoviesForGuest`);
+            throw new Error(`Something wrong with getRatedMovies`);
         });
 
     getMovies = async (query, page) =>
