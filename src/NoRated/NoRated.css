@@ -1,0 +1,15 @@
+.no-rated-container {
+    display: block;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.no-rated-img {
+    width: 165px;
+    height: 165px;
+}
+.no-rated-text {
+    margin: 0;
+    font-size: 15px;
+}

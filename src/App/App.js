@@ -9,6 +9,7 @@ import Input from '../Input/Input';
 import Card from '../Card/Card';
 import Api from '../Api/Api';
 import NoResult from '../NoResult/NoResult';
+import NoRated from '../NoRated/NoRated';
 
 class App extends React.Component {
     state = {
@@ -24,6 +25,7 @@ class App extends React.Component {
         isError: false,
         guestId: '',
         ratedMovies: null,
+        hasRated: false,
     };
 
     api = new Api();
@@ -156,6 +158,17 @@ class App extends React.Component {
         }
     };
 
+    onChangeRate = (rate, movieId) => {
+        this.setState({
+            hasRated: true,
+        });
+        const data = {
+            value: rate,
+        };
+        const { guestId } = this.state;
+        this.api.postRatedMovie(guestId, movieId, data);
+    };
+
     render() {
         const {
             isLoaded,
@@ -170,7 +183,9 @@ class App extends React.Component {
             isError,
             guestId,
             ratedMovies,
+            hasRated,
         } = this.state;
+
         if (isError) {
             return (
                 <Alert
@@ -191,8 +206,8 @@ class App extends React.Component {
                           releaseDate={movie.release_date}
                           overview={movie.overview}
                           vote={movie.vote_average}
-                          guestId={guestId}
                           movieId={movie.id}
+                          onChangeRate={this.onChangeRate}
                       />
                   ))
                 : null;
@@ -208,6 +223,7 @@ class App extends React.Component {
                     vote={movie.vote_average}
                     guestId={guestId}
                     movieId={movie.id}
+                    rating={movie.rating}
                 />
             ));
 
@@ -270,14 +286,23 @@ class App extends React.Component {
                             {
                                 label: `Rated`,
                                 key: '2',
-                                children: ratedCards ? (
-                                    <div
-                                        key="ratedCards"
-                                        className="card-container"
-                                    >
-                                        {ratedCards}
-                                    </div>
-                                ) : null,
+                                children: [
+                                    hasRated && ratedCards.length === 0 ? (
+                                        <Spin key="spin" />
+                                    ) : null,
+                                    !hasRated ? (
+                                        <NoRated key="no rated" />
+                                    ) : null,
+                                    alert,
+                                    ratedCards.length > 0 ? (
+                                        <div
+                                            key="ratedCards"
+                                            className="card-container"
+                                        >
+                                            {ratedCards}
+                                        </div>
+                                    ) : null,
+                                ],
                             },
                         ]}
                     />
