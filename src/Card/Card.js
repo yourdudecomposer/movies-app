@@ -3,10 +3,10 @@ import React from 'react';
 import { format } from 'date-fns';
 import PropTypes from 'prop-types';
 
-import noImg from '../img/noImg.png';
 import noImgtxt from '../img/noImg-txt.png';
 import Rate from '../Rate/Rate';
 import Vote from '../Vote/Vote';
+import Genres from '../Genres/Genres';
 
 export default function Card(props) {
     const trimText = (text, symbols) => {
@@ -15,7 +15,6 @@ export default function Card(props) {
         return `${subString.slice(0, subString.lastIndexOf(' '))}...`;
     };
     const fallbackImage = (e) => {
-        e.target.src = noImg;
         e.target.src = noImgtxt;
     };
     const {
@@ -27,7 +26,9 @@ export default function Card(props) {
         onChangeRate,
         rating,
         movieId,
+        genres,
     } = props;
+
     const outputDate = (() => {
         if (releaseDate) return format(new Date(releaseDate), 'MMMM d, yyy');
         return 'no data';
@@ -45,10 +46,11 @@ export default function Card(props) {
                 <h2 className="movie-title">{title}</h2>
                 <Vote vote={vote} />
                 <p className="movie-date">{outputDate}</p>
-                <div className="genre-info">
+                <Genres id={movieId} genres={genres} />
+                {/* <div className="genre-info">
                     <div className="genre-info__item">Action</div>
                     <div className="genre-info__item">Drama</div>
-                </div>
+                </div> */}
                 <p className="movie-description">
                     {innerWidth > 979
                         ? trimText(overview, 150)
@@ -74,6 +76,7 @@ Card.defaultProps = {
     movieId: NaN,
     rating: NaN,
     onChangeRate: () => {},
+    genres: [],
 };
 Card.propTypes = {
     title: PropTypes.string,
@@ -84,4 +87,5 @@ Card.propTypes = {
     movieId: PropTypes.number,
     rating: PropTypes.number,
     onChangeRate: PropTypes.func,
+    genres: PropTypes.arrayOf(PropTypes.number),
 };

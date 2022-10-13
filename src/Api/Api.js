@@ -52,4 +52,9 @@ export default class Api {
             }
             throw new Error(`Status not 200 is ${res.status}`);
         });
+
+    getGenres = async () =>
+        fetch(
+            `${this.url}/3/genre/movie/list?api_key=${this.api_key}&language=en-US`
+        ).then((res) => res.json());
 }

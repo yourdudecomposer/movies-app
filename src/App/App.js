@@ -10,6 +10,7 @@ import Card from '../Card/Card';
 import Api from '../Api/Api';
 import NoResult from '../NoResult/NoResult';
 import NoRated from '../NoRated/NoRated';
+import MyContext from '../MyContext/MyContext';
 
 class App extends React.Component {
     state = {
@@ -26,6 +27,7 @@ class App extends React.Component {
         guestId: '',
         ratedMovies: null,
         hasRated: false,
+        genres: null,
     };
 
     api = new Api();
@@ -35,6 +37,11 @@ class App extends React.Component {
     }, 1000);
 
     componentDidMount() {
+        this.api.getGenres().then((res) =>
+            this.setState({
+                genres: res,
+            })
+        );
         this.api.makeGuestSession().then((guestId) =>
             this.setState({
                 guestId,
@@ -184,8 +191,8 @@ class App extends React.Component {
             guestId,
             ratedMovies,
             hasRated,
+            genres,
         } = this.state;
-
         if (isError) {
             return (
                 <Alert
@@ -207,6 +214,7 @@ class App extends React.Component {
                           overview={movie.overview}
                           vote={movie.vote_average}
                           movieId={movie.id}
+                          genres={movie.genre_ids}
                           onChangeRate={this.onChangeRate}
                       />
                   ))
@@ -223,6 +231,7 @@ class App extends React.Component {
                     vote={movie.vote_average}
                     guestId={guestId}
                     movieId={movie.id}
+                    genres={movie.genre_ids}
                     rating={movie.rating}
                 />
             ));
@@ -252,62 +261,64 @@ class App extends React.Component {
 
         const noResult = isNoResult ? <NoResult key="no Results" /> : null;
         return (
-            <div className="App font-face-inter">
-                <div className="container">
-                    <Tabs
-                        className="tabs"
-                        defaultActiveKey="1"
-                        onChange={this.onChangeTab}
-                        items={[
-                            {
-                                label: `Search`,
-                                key: '1',
-                                children: [
-                                    <Input
-                                        key="input"
-                                        isFocus={isFocus}
-                                        query={query}
-                                        onChange={this.onChange}
-                                    />,
-                                    spin,
-                                    alert,
-                                    noResult,
-                                    cards ? (
-                                        <div
-                                            key="cards"
-                                            className="card-container"
-                                        >
-                                            {cards}
-                                        </div>
-                                    ) : null,
-                                    pagination,
-                                ],
-                            },
-                            {
-                                label: `Rated`,
-                                key: '2',
-                                children: [
-                                    hasRated && ratedCards.length === 0 ? (
-                                        <Spin key="spin" />
-                                    ) : null,
-                                    !hasRated ? (
-                                        <NoRated key="no rated" />
-                                    ) : null,
-                                    alert,
-                                    ratedCards.length > 0 ? (
-                                        <div
-                                            key="ratedCards"
-                                            className="card-container"
-                                        >
-                                            {ratedCards}
-                                        </div>
-                                    ) : null,
-                                ],
-                            },
-                        ]}
-                    />
+            <MyContext.Provider value={genres}>
+                <div className="App font-face-inter">
+                    <div className="container">
+                        <Tabs
+                            className="tabs"
+                            defaultActiveKey="1"
+                            onChange={this.onChangeTab}
+                            items={[
+                                {
+                                    label: `Search`,
+                                    key: '1',
+                                    children: [
+                                        <Input
+                                            key="input"
+                                            isFocus={isFocus}
+                                            query={query}
+                                            onChange={this.onChange}
+                                        />,
+                                        spin,
+                                        alert,
+                                        noResult,
+                                        cards ? (
+                                            <div
+                                                key="cards"
+                                                className="card-container"
+                                            >
+                                                {cards}
+                                            </div>
+                                        ) : null,
+                                        pagination,
+                                    ],
+                                },
+                                {
+                                    label: `Rated`,
+                                    key: '2',
+                                    children: [
+                                        hasRated && ratedCards.length === 0 ? (
+                                            <Spin key="spin" />
+                                        ) : null,
+                                        !hasRated ? (
+                                            <NoRated key="no rated" />
+                                        ) : null,
+                                        alert,
+                                        ratedCards.length > 0 ? (
+                                            <div
+                                                key="ratedCards"
+                                                className="card-container"
+                                            >
+                                                {ratedCards}
+                                            </div>
+                                        ) : null,
+                                    ],
+                                },
+                            ]}
+                        />
+                    </div>
                 </div>
-            </div>
+            </MyContext.Provider>
         );
     }
 }
