@@ -2,17 +2,23 @@ import React from 'react';
 import './Vote.css';
 import PropTypes from 'prop-types';
 
-function App(props) {
+function Vote(props) {
     const { vote } = props;
     const before3 = '#E90000';
     const before5 = '#E97E00';
     const before7 = '#E9D100';
     const up7 = '#66E900';
     const color = (() => {
-        if (vote < 3) return before3;
-        if (vote < 5) return before5;
-        if (vote < 7) return before7;
-        return up7;
+        switch (true) {
+            case vote < 3:
+                return before3;
+            case vote < 5:
+                return before5;
+            case vote < 7:
+                return before7;
+            default:
+                return up7;
+        }
     })();
     const borderColor = {
         border: `solid ${color}`,
@@ -23,11 +29,11 @@ function App(props) {
         </div>
     );
 }
-export default App;
+export default Vote;
 
-App.defaultProps = {
+Vote.defaultProps = {
     vote: -1,
 };
-App.propTypes = {
+Vote.propTypes = {
     vote: PropTypes.number,
 };

@@ -2,7 +2,7 @@ import React from 'react';
 import './Genres.css';
 import PropTypes from 'prop-types';
 
-import MyContext from '../MyContext/MyContext';
+import MyContext from '../../context/MyContext/MyContext';
 
 export default function Genres({ genres, id }) {
     return (

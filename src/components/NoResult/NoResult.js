@@ -1,7 +1,7 @@
 import React from 'react';
 
 import './NoResult.css';
-import sad from '../img/sad.png';
+import sad from '../../assets/img/sad.png';
 
 export default function NoResult() {
     return (

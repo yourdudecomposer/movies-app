@@ -4,18 +4,17 @@ import { Alert, Tabs } from 'antd';
 import debounce from 'lodash/debounce';
 
 import Pagination from '../Pagination/Pagination';
-import Spin from '../Spin/Spin';
+import Spin from '../ui/Spin/Spin';
 import Input from '../Input/Input';
 import Card from '../Card/Card';
-import Api from '../Api/Api';
+import Api from '../../services/Api/Api';
 import NoResult from '../NoResult/NoResult';
 import NoRated from '../NoRated/NoRated';
-import MyContext from '../MyContext/MyContext';
+import MyContext from '../../context/MyContext/MyContext';
 
 class App extends React.Component {
     state = {
-        isSpin: false,
-        isLoaded: false,
+        isLoading: false,
         isNoResult: false,
         query: '',
         movies: null,
@@ -24,6 +23,7 @@ class App extends React.Component {
         totalPages: null,
         isFocus: true,
         isError: false,
+        isLoaded: false,
         guestId: '',
         ratedMovies: null,
         hasRated: false,
@@ -37,16 +37,20 @@ class App extends React.Component {
     }, 1000);
 
     componentDidMount() {
-        this.api.getGenres().then((res) =>
+        (async () => {
+            const res = await this.api.getGenres();
             this.setState({
                 genres: res,
-            })
-        );
-        this.api.makeGuestSession().then((guestId) =>
+            });
+        })();
+        (async () => {
+            const guestId = await this.api.getGuestId();
             this.setState({
                 guestId,
-            })
-        );
+            });
+        })();
+
+        this.onChange({ target: { value: 'oops' } });
     }
 
     componentDidCatch() {
@@ -59,64 +63,63 @@ class App extends React.Component {
         if (req) this.putMoviesToState(req, page);
     };
 
-    putMoviesToState = (req, page) => {
-        this.api
-            .getMovies(req, page)
-            .then((result) => {
-                const movies = result.results;
-                if (movies.length > 0) {
-                    return this.setState({
-                        isFocus: false,
-                        isSpin: false,
-                        isNoResult: false,
-                        isLoaded: true,
-                        movies,
-                        page: result.page,
-                        totalPages: result.total_pages,
-                    });
-                }
-                if (movies.length === 0) {
-                    return this.setState({
-                        isSpin: false,
-                        isLoaded: false,
-                        isNoResult: true,
-                    });
-                }
-                throw new Error(`movies is ${movies}`);
-            })
-            .catch((err) => {
-                if (err.message === 'Failed to fetch') {
-                    this.setState({
-                        isLoaded: true,
-                        isSpin: false,
-                        error: {
-                            name: 'Whooops',
-                            message: 'We can`t connect each other',
-                        },
-                    });
-                } else
-                    this.setState({
-                        isLoaded: true,
-                        isSpin: false,
-                        error: {
-                            name: err.name,
-                            message: err.message,
-                        },
-                    });
-            });
+    putMoviesToState = async (req, page) => {
+        try {
+            const result = await this.api.getMovies(req, page);
+            const movies = result.results;
+            if (movies.length > 0) {
+                return this.setState({
+                    isFocus: false,
+                    isLoading: false,
+                    isNoResult: false,
+                    isLoaded: true,
+                    movies,
+                    page: result.page,
+                    totalPages: result.total_pages,
+                });
+            }
+            if (movies.length === 0) {
+                return this.setState({
+                    isLoading: false,
+                    isLoaded: false,
+                    isNoResult: true,
+                });
+            }
+            throw new Error(`movies is ${movies}`);
+        } catch (err) {
+            if (err.message === 'Failed to fetch') {
+                this.setState({
+                    isLoaded: true,
+                    isLoading: false,
+                    error: {
+                        name: 'Whooops',
+                        message: 'We can`t connect each other',
+                    },
+                });
+            } else
+                this.setState({
+                    isLoaded: true,
+                    isLoading: false,
+                    error: {
+                        name: err.name,
+                        message: err.message,
+                    },
+                });
+        }
+        return null;
     };
 
     clearAll = (e) => {
         if (e.target.value === '')
             this.setState({
                 isLoaded: false,
-                isSpin: false,
+                isLoading: false,
                 isNoResult: false,
                 error: null,
             });
         else
             this.setState({
-                isSpin: true,
+                isLoading: true,
                 isNoResult: false,
                 isLoaded: false,
             });
@@ -129,7 +132,7 @@ class App extends React.Component {
             });
             const { query } = this.state;
             this.setState({
-                isSpin: true,
+                isLoading: true,
                 isNoResult: false,
                 isLoaded: false,
             });
@@ -151,17 +154,13 @@ class App extends React.Component {
         );
     };
 
-    onChangeTab = (key) => {
+    onChangeTab = async (key) => {
         if (key === '2') {
             const { guestId } = this.state;
-            this.api
-                .getRatedMovies(guestId)
-                .then((res) => res.results)
-                .then((res) =>
-                    this.setState({
-                        ratedMovies: res,
-                    })
-                );
+            const result = await this.api.getRatedMovies(guestId);
+            this.setState({
+                ratedMovies: result.results,
+            });
         }
     };
 
@@ -183,7 +182,7 @@ class App extends React.Component {
             error,
             page,
             query,
-            isSpin,
+            isLoading,
             isNoResult,
             totalPages,
             isFocus,
@@ -204,7 +203,7 @@ class App extends React.Component {
             );
         }
         const cards =
-            isLoaded && !error && !isSpin
+            isLoaded && !error && !isLoading
                 ? movies.map((movie) => (
                       <Card
                           key={movie.id}
@@ -233,10 +232,11 @@ class App extends React.Component {
                     movieId={movie.id}
                     genres={movie.genre_ids}
                     rating={movie.rating}
+                    onChangeRate={this.onChangeRate}
                 />
             ));
 
-        const spin = isSpin ? <Spin key="spin" /> : null;
+        const spin = isLoading ? <Spin key="spin" /> : null;
 
         const alert = error ? (
             <Alert
@@ -260,6 +260,7 @@ class App extends React.Component {
             ) : null;
 
         const noResult = isNoResult ? <NoResult key="no Results" /> : null;
+
         return (
             <MyContext.Provider value={genres}>
                 <div className="App font-face-inter">

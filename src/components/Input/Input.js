@@ -10,6 +10,7 @@ export default function Search(props) {
         if (isFocus) inputRef.current.focus();
         else if (!isFocus && window.innerWidth < 481) inputRef.current.blur();
     });
+
     return (
         <Input
             ref={inputRef}

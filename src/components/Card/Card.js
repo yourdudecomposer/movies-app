@@ -3,10 +3,10 @@ import React from 'react';
 import { format } from 'date-fns';
 import PropTypes from 'prop-types';
 
-import noImgtxt from '../img/noImg-txt.png';
 import Rate from '../Rate/Rate';
 import Vote from '../Vote/Vote';
 import Genres from '../Genres/Genres';
+import Poster from '../ui/Poster/Poster';
 
 export default function Card(props) {
     const trimText = (text, symbols) => {
@@ -14,9 +14,7 @@ export default function Card(props) {
         const subString = text.slice(0, symbols);
         return `${subString.slice(0, subString.lastIndexOf(' '))}...`;
     };
-    const fallbackImage = (e) => {
-        e.target.src = noImgtxt;
-    };
+
     const {
         title,
         posterPath,
@@ -36,21 +34,12 @@ export default function Card(props) {
     const { innerWidth } = window;
     return (
         <div className="card">
-            <img
-                className="poster"
-                src={`https://image.tmdb.org/t/p/original${posterPath}`}
-                alt="poster"
-                onError={fallbackImage}
-            />
-            <div className="about">
+            <Poster posterPath={posterPath} />
+            <section className="about">
                 <h2 className="movie-title">{title}</h2>
                 <Vote vote={vote} />
                 <p className="movie-date">{outputDate}</p>
                 <Genres id={movieId} genres={genres} />
-                {/* <div className="genre-info">
-                    <div className="genre-info__item">Action</div>
-                    <div className="genre-info__item">Drama</div>
-                </div> */}
                 <p className="movie-description">
                     {innerWidth > 979
                         ? trimText(overview, 150)
@@ -61,7 +50,7 @@ export default function Card(props) {
                     onChangeRate={onChangeRate}
                     movieId={movieId}
                 />
-            </div>
+            </section>
         </div>
     );
 }
