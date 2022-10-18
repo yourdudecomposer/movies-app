@@ -1,0 +1,29 @@
+.card img {
+    width: 183px;
+    height: 281px;
+    margin: 0;
+    margin-top: 6px;
+    margin-left: 10px;
+    margin-right: 13px;
+    margin-bottom: 10px;
+    float: left;
+}
+
+.img-spin {
+    width: 183px;
+    height: 281px;
+    float: left;
+    padding-top: 10px;
+}
+
+@media (max-width: 980px) {
+    .card img {
+        width: 60px;
+        height: 91px;
+    }
+    .img-spin {
+        width: 60px;
+        height: 91px;
+        float: left;
+    }
+}

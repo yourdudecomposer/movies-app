@@ -1,6 +1,8 @@
 export default class Api {
     url = 'https://api.themoviedb.org';
 
+    urlForImg = 'https://image.tmdb.org/t/p/original';
+
     api_key = 'dc6a91030f196c7ac8aced1095b014e9';
 
     static async sendGetRequest(url) {
@@ -27,6 +29,16 @@ export default class Api {
         });
     }
 
+    getImg = async (posterPath) => {
+        const url = `${this.urlForImg}${posterPath}`;
+
+        const res = await fetch(url);
+        if (!res.ok) {
+            throw new Error(`Status not 200 is ${res.status}`);
+        }
+        return res.blob();
+    };
+
     getGuestId = async () => {
         const url = `${this.url}/3/authentication/guest_session/new?api_key=${this.api_key}`;
         const res = await Api.sendGetRequest(url);
@@ -45,7 +57,7 @@ export default class Api {
         return Api.sendGetRequest(url);
     };
 
-    getMovies = async (query, page) => {
+    getMovies = async (query, page = 1) => {
         const url = `${this.url}/3/search/movie?api_key=${this.api_key}&query=${query}&page=${page}`;
         return Api.sendGetRequest(url);
     };

@@ -49,8 +49,6 @@ class App extends React.Component {
                 guestId,
             });
         })();
-
-        this.onChange({ target: { value: 'oops' } });
     }
 
     componentDidCatch() {
@@ -138,20 +136,6 @@ class App extends React.Component {
             });
             this.search(query, page);
         }, 300);
-    };
-
-    onChange = (e) => {
-        this.clearAll(e);
-        this.setState(
-            {
-                isFocus: true,
-                query: e.target.value,
-            },
-            () => {
-                const { query } = this.state;
-                this.debouncedSearch(query);
-            }
-        );
     };
 
     onChangeTab = async (key) => {
@@ -278,18 +262,21 @@ class App extends React.Component {
                                             key="input"
                                             isFocus={isFocus}
                                             query={query}
-                                            onChange={this.onChange}
+                                            debouncedSearch={
+                                                this.debouncedSearch
+                                            }
+                                            clearAll={this.clearAll}
                                         />,
                                         spin,
                                         alert,
                                         noResult,
                                         cards ? (
-                                            <div
+                                            <main
                                                 key="cards"
                                                 className="card-container"
                                             >
                                                 {cards}
-                                            </div>
+                                            </main>
                                         ) : null,
                                         pagination,
                                     ],
@@ -306,12 +293,12 @@ class App extends React.Component {
                                         ) : null,
                                         alert,
                                         ratedCards.length > 0 ? (
-                                            <div
+                                            <main
                                                 key="ratedCards"
                                                 className="card-container"
                                             >
                                                 {ratedCards}
-                                            </div>
+                                            </main>
                                         ) : null,
                                     ],
                                 },

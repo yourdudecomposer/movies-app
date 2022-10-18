@@ -18,24 +18,6 @@
     }
 }
 
-.card img {
-    width: 183px;
-    height: 281px;
-    margin: 0;
-    margin-top: 6px;
-    margin-left: 10px;
-    margin-right: 13px;
-    margin-bottom: 10px;
-    float: left;
-}
-
-@media (max-width: 980px) {
-    .card img {
-        width: 60px;
-        height: 91px;
-    }
-}
-
 .about {
     padding-top: 12px;
     position: relative;
