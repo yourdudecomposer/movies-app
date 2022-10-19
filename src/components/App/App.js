@@ -20,6 +20,7 @@ class App extends React.Component {
         totalPages: null,
         isError: false,
         guestId: '',
+        query: '',
         ratedMovies: [],
         genres: null,
     };
@@ -66,6 +67,7 @@ class App extends React.Component {
     search = async (req, page = 1) => {
         this.setState({
             isLoading: true,
+            query: req,
         });
         try {
             const result = await this.api.getMovies(req, page);
@@ -93,10 +95,11 @@ class App extends React.Component {
             this.setState({
                 page,
             });
-            const { query } = this.state;
             this.setState({
                 isLoading: true,
             });
+            const { query } = this.state;
+
             this.search(query, page);
         }, 300);
     };
