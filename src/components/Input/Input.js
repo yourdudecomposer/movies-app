@@ -12,7 +12,7 @@ export default function Search(props) {
 
     return (
         <Input
-            defaultValue="list"
+            defaultValue="oops"
             onChange={(e) => onChange(e)}
             className="input"
             placeholder="Try typing..."
