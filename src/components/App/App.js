@@ -14,41 +14,47 @@ import MyContext from '../../context/MyContext/MyContext';
 
 class App extends React.Component {
     state = {
-        isLoading: false,
-        isNoResult: false,
-        query: '',
-        movies: null,
-        error: null,
+        isLoading: true,
+        movies: [],
         page: null,
         totalPages: null,
-        isFocus: true,
         isError: false,
-        isLoaded: false,
         guestId: '',
-        ratedMovies: null,
-        hasRated: false,
+        ratedMovies: [],
         genres: null,
     };
 
     api = new Api();
 
-    debouncedSearch = debounce((req, page = 1) => {
-        if (req) this.putMoviesToState(req, page);
-    }, 1000);
-
     componentDidMount() {
         (async () => {
-            const res = await this.api.getGenres();
-            this.setState({
-                genres: res,
-            });
+            try {
+                const res = await this.api.getGenres();
+                this.setState({
+                    genres: res,
+                });
+            } catch (error) {
+                this.setState({
+                    isLoading: false,
+                    isError: true,
+                });
+            }
         })();
+
         (async () => {
-            const guestId = await this.api.getGuestId();
-            this.setState({
-                guestId,
-            });
+            try {
+                const guestId = await this.api.getGuestId();
+                this.setState({
+                    guestId,
+                });
+            } catch (error) {
+                this.setState({
+                    isLoading: false,
+                    isError: true,
+                });
+            }
         })();
+        this.search('list');
     }
 
     componentDidCatch() {
@@ -57,70 +63,29 @@ class App extends React.Component {
         });
     }
 
-    search = (req, page = 1) => {
-        if (req) this.putMoviesToState(req, page);
-    };
-
-    putMoviesToState = async (req, page) => {
+    search = async (req, page = 1) => {
+        this.setState({
+            isLoading: true,
+        });
         try {
             const result = await this.api.getMovies(req, page);
-            const movies = result.results;
-            if (movies.length > 0) {
-                return this.setState({
-                    isFocus: false,
-                    isLoading: false,
-                    isNoResult: false,
-                    isLoaded: true,
-                    movies,
-                    page: result.page,
-                    totalPages: result.total_pages,
-                });
-            }
-            if (movies.length === 0) {
-                return this.setState({
-                    isLoading: false,
-                    isLoaded: false,
-                    isNoResult: true,
-                });
-            }
-            throw new Error(`movies is ${movies}`);
+            this.putResultToState(result);
         } catch (err) {
-            if (err.message === 'Failed to fetch') {
-                this.setState({
-                    isLoaded: true,
-                    isLoading: false,
-                    error: {
-                        name: 'Whooops',
-                        message: 'We can`t connect each other',
-                    },
-                });
-            } else
-                this.setState({
-                    isLoaded: true,
-                    isLoading: false,
-                    error: {
-                        name: err.name,
-                        message: err.message,
-                    },
-                });
+            this.setState({
+                isLoading: false,
+                isError: true,
+            });
         }
-        return null;
     };
 
-    clearAll = (e) => {
-        if (e.target.value === '')
-            this.setState({
-                isLoaded: false,
-                isLoading: false,
-                isNoResult: false,
-                error: null,
-            });
-        else
-            this.setState({
-                isLoading: true,
-                isNoResult: false,
-                isLoaded: false,
-            });
+    putResultToState = (result) => {
+        const movies = result.results;
+        return this.setState({
+            isLoading: false,
+            movies,
+            page: result.page,
+            totalPages: result.total_pages,
+        });
     };
 
     changePage = (page) => {
@@ -131,8 +96,6 @@ class App extends React.Component {
             const { query } = this.state;
             this.setState({
                 isLoading: true,
-                isNoResult: false,
-                isLoaded: false,
             });
             this.search(query, page);
         }, 300);
@@ -149,9 +112,6 @@ class App extends React.Component {
     };
 
     onChangeRate = (rate, movieId) => {
-        this.setState({
-            hasRated: true,
-        });
         const data = {
             value: rate,
         };
@@ -161,19 +121,13 @@ class App extends React.Component {
 
     render() {
         const {
-            isLoaded,
             movies,
-            error,
             page,
-            query,
             isLoading,
-            isNoResult,
             totalPages,
-            isFocus,
             isError,
             guestId,
             ratedMovies,
-            hasRated,
             genres,
         } = this.state;
         if (isError) {
@@ -186,9 +140,24 @@ class App extends React.Component {
                 />
             );
         }
-        const cards =
-            isLoaded && !error && !isLoading
-                ? movies.map((movie) => (
+        const cards = !isLoading
+            ? movies.map((movie) => (
+                  <Card
+                      key={movie.id}
+                      title={movie.title}
+                      posterPath={movie.poster_path}
+                      releaseDate={movie.release_date}
+                      overview={movie.overview}
+                      vote={movie.vote_average}
+                      movieId={movie.id}
+                      genres={movie.genre_ids}
+                      onChangeRate={this.onChangeRate}
+                  />
+              ))
+            : null;
+        const ratedCards =
+            ratedMovies.length > 0
+                ? ratedMovies.map((movie) => (
                       <Card
                           key={movie.id}
                           title={movie.title}
@@ -196,45 +165,19 @@ class App extends React.Component {
                           releaseDate={movie.release_date}
                           overview={movie.overview}
                           vote={movie.vote_average}
+                          guestId={guestId}
                           movieId={movie.id}
                           genres={movie.genre_ids}
+                          rating={movie.rating}
                           onChangeRate={this.onChangeRate}
                       />
                   ))
                 : null;
-        const ratedCards =
-            ratedMovies !== null &&
-            ratedMovies.map((movie) => (
-                <Card
-                    key={movie.id}
-                    title={movie.title}
-                    posterPath={movie.poster_path}
-                    releaseDate={movie.release_date}
-                    overview={movie.overview}
-                    vote={movie.vote_average}
-                    guestId={guestId}
-                    movieId={movie.id}
-                    genres={movie.genre_ids}
-                    rating={movie.rating}
-                    onChangeRate={this.onChangeRate}
-                />
-            ));
 
         const spin = isLoading ? <Spin key="spin" /> : null;
 
-        const alert = error ? (
-            <Alert
-                key="alert"
-                message={error.name}
-                description={error.message}
-                type="error"
-                showIcon
-                closable
-            />
-        ) : null;
-
         const pagination =
-            isLoaded && totalPages > 1 ? (
+            totalPages > 1 && !isLoading ? (
                 <Pagination
                     key="pages"
                     changePage={this.changePage}
@@ -243,7 +186,10 @@ class App extends React.Component {
                 />
             ) : null;
 
-        const noResult = isNoResult ? <NoResult key="no Results" /> : null;
+        const noResult =
+            movies.length === 0 && !isLoading ? (
+                <NoResult key="no Results" />
+            ) : null;
 
         return (
             <MyContext.Provider value={genres}>
@@ -259,16 +205,14 @@ class App extends React.Component {
                                     key: '1',
                                     children: [
                                         <Input
+                                            search={debounce(this.search, 1000)}
                                             key="input"
-                                            isFocus={isFocus}
-                                            query={query}
-                                            debouncedSearch={
-                                                this.debouncedSearch
-                                            }
                                             clearAll={this.clearAll}
+                                            putResultToState={
+                                                this.putResultToState
+                                            }
                                         />,
                                         spin,
-                                        alert,
                                         noResult,
                                         cards ? (
                                             <main
@@ -285,21 +229,16 @@ class App extends React.Component {
                                     label: `Rated`,
                                     key: '2',
                                     children: [
-                                        hasRated && ratedCards.length === 0 ? (
-                                            <Spin key="spin" />
-                                        ) : null,
-                                        !hasRated ? (
-                                            <NoRated key="no rated" />
-                                        ) : null,
-                                        alert,
-                                        ratedCards.length > 0 ? (
+                                        ratedCards ? (
                                             <main
                                                 key="ratedCards"
                                                 className="card-container"
                                             >
                                                 {ratedCards}
                                             </main>
-                                        ) : null,
+                                        ) : (
+                                            <NoRated key="no rated" />
+                                        ),
                                     ],
                                 },
                             ]}
