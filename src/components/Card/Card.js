@@ -27,10 +27,10 @@ export default function Card(props) {
         genres,
     } = props;
 
-    const outputDate = (() => {
-        if (releaseDate) return format(new Date(releaseDate), 'MMMM d, yyy');
-        return 'no data';
-    })();
+    const outputDate = (() =>
+        releaseDate
+            ? format(new Date(releaseDate), 'MMMM d, yyy')
+            : 'no data')();
     const { innerWidth } = window;
     return (
         <div className="card">
@@ -39,7 +39,7 @@ export default function Card(props) {
                 <h2 className="movie-title">{title}</h2>
                 <Vote vote={vote} />
                 <p className="movie-date">{outputDate}</p>
-                <Genres id={movieId} genres={genres} />
+                <Genres genres={genres} />
                 <p className="movie-description">
                     {innerWidth > 979
                         ? trimText(overview, 150)

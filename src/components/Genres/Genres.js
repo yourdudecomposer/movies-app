@@ -4,17 +4,25 @@ import PropTypes from 'prop-types';
 
 import MyContext from '../../context/MyContext/MyContext';
 
-export default function Genres({ genres, id }) {
+export default function Genres({ genres }) {
     return (
         <MyContext.Consumer>
             {(value) => {
                 const genresList = [];
+                // const genresList= value.genres
+                //     .filter(element => genres.includes(element.id))
+                //     .map(e => <li
+                //         key={e.id}
+                //         className="genre-info__item"
+                //     >
+                //         {e.name}
+                //     </li>);
                 genres.forEach((el) => {
                     value.genres.forEach((em) => {
                         if (el === em.id) {
                             genresList.push(
                                 <li
-                                    key={id * Math.random()}
+                                    key={Math.random()}
                                     className="genre-info__item"
                                 >
                                     {em.name}
@@ -31,10 +39,8 @@ export default function Genres({ genres, id }) {
 }
 
 Genres.defaultProps = {
-    id: NaN,
     genres: [],
 };
 Genres.propTypes = {
-    id: PropTypes.number,
     genres: PropTypes.arrayOf(PropTypes.number),
 };

@@ -28,34 +28,7 @@ class App extends React.Component {
     api = new Api();
 
     componentDidMount() {
-        (async () => {
-            try {
-                const res = await this.api.getGenres();
-                this.setState({
-                    genres: res,
-                });
-            } catch (error) {
-                this.setState({
-                    isLoading: false,
-                    isError: true,
-                });
-            }
-        })();
-
-        (async () => {
-            try {
-                const guestId = await this.api.getGuestId();
-                this.setState({
-                    guestId,
-                });
-            } catch (error) {
-                this.setState({
-                    isLoading: false,
-                    isError: true,
-                });
-            }
-        })();
-        this.search('oops');
+        this.initApplication('ma');
     }
 
     componentDidCatch() {
@@ -63,6 +36,23 @@ class App extends React.Component {
             isError: true,
         });
     }
+
+    initApplication = async (query) => {
+        try {
+            const res = await this.api.getGenres();
+            const guestId = await this.api.getGuestId();
+            this.setState({
+                guestId,
+                genres: res,
+            });
+            this.search(query);
+        } catch (error) {
+            this.setState({
+                isLoading: false,
+                isError: true,
+            });
+        }
+    };
 
     search = async (req, page = 1) => {
         this.setState({
@@ -91,17 +81,15 @@ class App extends React.Component {
     };
 
     changePage = (page) => {
-        setTimeout(() => {
-            this.setState({
-                page,
-            });
-            this.setState({
-                isLoading: true,
-            });
-            const { query } = this.state;
+        this.setState({
+            page,
+        });
+        this.setState({
+            isLoading: true,
+        });
+        const { query } = this.state;
 
-            this.search(query, page);
-        }, 300);
+        this.search(query, page);
     };
 
     onChangeTab = async (key) => {

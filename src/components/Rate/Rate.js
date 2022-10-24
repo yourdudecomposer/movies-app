@@ -1,10 +1,10 @@
-import { Rate } from 'antd';
+import { Rate as AntdRate } from 'antd';
 import React from 'react';
 import PropTypes from 'prop-types';
 
 import './Rate.css';
 
-export default class App extends React.Component {
+export default class Rate extends React.Component {
     state = {
         value: null,
     };
@@ -14,16 +14,18 @@ export default class App extends React.Component {
         this.setState({ value: rating });
     }
 
+    onChangeRate = (rate) => {
+        const { onChangeRate, movieId } = this.props;
+        this.setState({ value: rate });
+        onChangeRate(rate, movieId);
+    };
+
     render() {
         const { value } = this.state;
-        const { onChangeRate, movieId } = this.props;
 
         return (
-            <Rate
-                onChange={(rate) => {
-                    this.setState({ value: rate });
-                    onChangeRate(rate, movieId);
-                }}
+            <AntdRate
+                onChange={this.onChangeRate}
                 className="rate"
                 allowHalf
                 count={10}
@@ -33,12 +35,12 @@ export default class App extends React.Component {
     }
 }
 
-App.defaultProps = {
+Rate.defaultProps = {
     movieId: NaN,
     rating: NaN,
     onChangeRate: () => {},
 };
-App.propTypes = {
+Rate.propTypes = {
     movieId: PropTypes.number,
     onChangeRate: PropTypes.func,
     rating: PropTypes.number,

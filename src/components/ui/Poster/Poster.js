@@ -15,16 +15,22 @@ export default class Poster extends React.Component {
     api = new Api();
 
     componentDidMount() {
+        this.getImg();
+    }
+
+    async getImg() {
         const { posterPath } = this.props;
-        (async () => {
-            try {
-                const res = await this.api.getImg(posterPath);
-                const blobUrl = URL.createObjectURL(res); // blob is the Blob object
-                this.setState({ src: blobUrl, loading: false });
-            } catch (error) {
-                this.setState({ src: noImgtxt, loading: false });
-            }
-        })();
+        if (posterPath === null) {
+            this.setState({ src: noImgtxt, loading: false });
+            return;
+        }
+        try {
+            const res = await this.api.getImg(posterPath);
+            const blobUrl = URL.createObjectURL(res); // blob is the Blob object
+            this.setState({ src: blobUrl, loading: false });
+        } catch (error) {
+            this.setState({ src: noImgtxt, loading: false });
+        }
     }
 
     render() {
@@ -36,16 +42,6 @@ export default class Poster extends React.Component {
         ) : (
             <img className="poster" alt="poster" src={src} />
         );
-        // <>
-        //     {
-        //         loading ? <div className="img-spin"><Spin /> </div> :
-        //             <img
-        //                 className="poster"
-        //                 alt="poster"
-        //                 src={src}
-        //             />
-        //     }
-        // </>
     }
 }
 

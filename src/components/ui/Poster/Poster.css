@@ -6,10 +6,13 @@
     float: left;
 }
 
+.img-spin .ant-spin{
+    width: 203px;
+}
 .img-spin {
-    width: 183px;
     height: 281px;
     float: left;
+
     padding-top: 10px;
 }
 

@@ -13,6 +13,7 @@ module.exports = {
     rules: {
         'react/jsx-filename-extension': [1, { extensions: ['.js', '.jsx'] }],
         'react/state-in-constructor': ['error', 'never'],
+        'class-methods-use-this': [1],
         'import/order': [
             2,
             {

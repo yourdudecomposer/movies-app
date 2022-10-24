@@ -4,22 +4,29 @@ import PropTypes from 'prop-types';
 
 function Vote(props) {
     const { vote } = props;
-    const before3 = '#E90000';
-    const before5 = '#E97E00';
-    const before7 = '#E9D100';
-    const up7 = '#66E900';
-    const color = (() => {
+
+    const colors = {
+        before3: '#E90000',
+        before5: '#E97E00',
+        before7: '#E9D100',
+        up7: '#66E900',
+    };
+
+    const getColor = (num) => {
+        const { before3, before5, before7, up7 } = colors;
         switch (true) {
-            case vote < 3:
+            case num < 3:
                 return before3;
-            case vote < 5:
+            case num < 5:
                 return before5;
-            case vote < 7:
+            case num < 7:
                 return before7;
             default:
                 return up7;
         }
-    })();
+    };
+
+    const color = getColor(vote);
     const borderColor = {
         border: `solid ${color}`,
     };
