@@ -39,7 +39,7 @@ export default function Card(props) {
                 <h2 className="movie-title">{title}</h2>
                 <Vote vote={vote} />
                 <p className="movie-date">{outputDate}</p>
-                <Genres genres={genres} />
+                <Genres currentGenres={genres} />
                 <p className="movie-description">
                     {innerWidth > 979
                         ? trimText(overview, 150)

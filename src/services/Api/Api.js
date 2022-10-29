@@ -31,7 +31,6 @@ export default class Api {
 
     getImg = async (posterPath) => {
         const url = `${this.urlForImg}${posterPath}`;
-
         const res = await fetch(url);
         if (!res.ok) {
             throw new Error(`Status not 200 is ${res.status}`);
