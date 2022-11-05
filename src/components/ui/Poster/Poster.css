@@ -35,4 +35,7 @@
         margin-right: 13px;
         margin-bottom: 10px;
     }
+    .img-spin .ant-spin.ant-spin-spinning.spin{
+        width: 60px;
+    }
 }
